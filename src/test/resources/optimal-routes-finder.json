@@ -1,0 +1,164 @@
+[
+    {
+      "id": "100",
+      "routeType": "FLIGHT",
+      "fromAirport": "CGN",
+      "toAirport": "BER",
+      "departureDateTime": "2026-07-21T07:00:00+02:00",
+      "arrivalDateTime": "2026-07-21T08:10:00+02:00",
+      "availableSeats": 45,
+      "price": 89,
+      "airlineName": "Eurowings",
+      "trainOperator": null
+    },
+    {
+      "id": "101",
+      "routeType": "TRAIN",
+      "fromAirport": "CGN",
+      "toAirport": "BER",
+      "departureDateTime": "2026-07-21T06:30:00+02:00",
+      "arrivalDateTime": "2026-07-21T11:00:00+02:00",
+      "availableSeats": 8,
+      "price": 49.9,
+      "airlineName": null,
+      "trainOperator": "Deutsche Bahn"
+    },
+    {
+      "id": "102",
+      "routeType": "FLIGHT",
+      "fromAirport": "CGN",
+      "toAirport": "BER",
+      "departureDateTime": "2026-07-21T12:30:00+02:00",
+      "arrivalDateTime": "2026-07-21T13:40:00+02:00",
+      "availableSeats": 3,
+      "price": 119,
+      "airlineName": "Eurowings",
+      "trainOperator": null
+    },
+
+    {
+      "id": "103",
+      "routeType": "FLIGHT",
+      "fromAirport": "BER",
+      "toAirport": "IST",
+      "departureDateTime": "2026-07-21T14:30:00+02:00",
+      "arrivalDateTime": "2026-07-21T18:15:00+03:00",
+      "availableSeats": 5,
+      "price": 129,
+      "airlineName": "Pegasus Airlines",
+      "trainOperator": null
+    },
+    {
+      "id": "104",
+      "routeType": "FLIGHT",
+      "fromAirport": "BER",
+      "toAirport": "IST",
+      "departureDateTime": "2026-07-21T16:00:00+02:00",
+      "arrivalDateTime": "2026-07-21T19:45:00+03:00",
+      "availableSeats": 2,
+      "price": 159,
+      "airlineName": "Turkish Airlines",
+      "trainOperator": null
+    },
+
+    {
+      "id": "105",
+      "routeType": "FLIGHT",
+      "fromAirport": "CGN",
+      "toAirport": "IST",
+      "departureDateTime": "2026-07-21T09:00:00+02:00",
+      "arrivalDateTime": "2026-07-21T13:10:00+03:00",
+      "availableSeats": 6,
+      "price": 249,
+      "airlineName": "Turkish Airlines",
+      "trainOperator": null
+    },
+    {
+      "id": "106",
+      "routeType": "FLIGHT",
+      "fromAirport": "CGN",
+      "toAirport": "IST",
+      "departureDateTime": "2026-07-21T18:00:00+02:00",
+      "arrivalDateTime": "2026-07-21T22:10:00+03:00",
+      "availableSeats": 20,
+      "price": 289,
+      "airlineName": "Pegasus Airlines",
+      "trainOperator": null
+    },
+
+    {
+      "id": "107",
+      "routeType": "FLIGHT",
+      "fromAirport": "BER",
+      "toAirport": "CGN",
+      "departureDateTime": "2026-07-21T08:30:00+02:00",
+      "arrivalDateTime": "2026-07-21T09:40:00+02:00",
+      "availableSeats": 39,
+      "price": 99,
+      "airlineName": "Eurowings",
+      "trainOperator": null
+    },
+    {
+      "id": "108",
+      "routeType": "TRAIN",
+      "fromAirport": "BER",
+      "toAirport": "CGN",
+      "departureDateTime": "2026-07-21T07:00:00+02:00",
+      "arrivalDateTime": "2026-07-21T11:30:00+02:00",
+      "availableSeats": 18,
+      "price": 54.9,
+      "airlineName": null,
+      "trainOperator": "Deutsche Bahn"
+    },
+
+    {
+      "id": "109",
+      "routeType": "FLIGHT",
+      "fromAirport": "IST",
+      "toAirport": "BER",
+      "departureDateTime": "2026-07-21T10:00:00+03:00",
+      "arrivalDateTime": "2026-07-21T11:50:00+02:00",
+      "availableSeats": 52,
+      "price": 139,
+      "airlineName": "Turkish Airlines",
+      "trainOperator": null
+    },
+    {
+      "id": "110",
+      "routeType": "FLIGHT",
+      "fromAirport": "IST",
+      "toAirport": "BER",
+      "departureDateTime": "2026-07-21T15:30:00+03:00",
+      "arrivalDateTime": "2026-07-21T17:20:00+02:00",
+      "availableSeats": 34,
+      "price": 119,
+      "airlineName": "Pegasus Airlines",
+      "trainOperator": null
+    },
+
+    {
+      "id": "111",
+      "routeType": "FLIGHT",
+      "fromAirport": "IST",
+      "toAirport": "CGN",
+      "departureDateTime": "2026-07-21T08:00:00+03:00",
+      "arrivalDateTime": "2026-07-21T10:30:00+02:00",
+      "availableSeats": 61,
+      "price": 219,
+      "airlineName": "Turkish Airlines",
+      "trainOperator": null
+    },
+    {
+      "id": "112",
+      "routeType": "FLIGHT",
+      "fromAirport": "IST",
+      "toAirport": "CGN",
+      "departureDateTime": "2026-07-21T19:00:00+03:00",
+      "arrivalDateTime": "2026-07-21T21:30:00+02:00",
+      "availableSeats": 43,
+      "price": 239,
+      "airlineName": "Pegasus Airlines",
+      "trainOperator": null
+    }
+]
+

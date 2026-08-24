@@ -1,0 +1,198 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f6f8;
+  color: #1f2937;
+}
+
+button {
+  font: inherit;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+h1 {
+  margin-bottom: 30px;
+}
+
+.booking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.booking-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.booking-header {
+  width: 100%;
+  border: none;
+  background: white;
+  padding: 24px;
+
+  display: grid;
+  grid-template-columns:
+    120px
+    1.5fr
+    1.5fr
+    1.5fr
+    100px
+    40px;
+
+  align-items: center;
+  gap: 20px;
+
+  text-align: left;
+  cursor: pointer;
+}
+
+.booking-header:hover {
+  background: #fafafa;
+}
+
+.booking-id {
+  color: #2563eb;
+  font-size: 18px;
+}
+
+.route {
+  margin-left: 12px;
+  color: #6b7280;
+}
+
+.status {
+  padding: 6px 12px;
+  border-radius: 20px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.disrupted {
+  color: #b91c1c;
+  background: #fee2e2;
+}
+
+.pending {
+  color: #b45309;
+  background: #fef3c7;
+}
+
+.arrow {
+  font-size: 24px;
+  text-align: center;
+}
+
+.passenger-count{
+  max-width: 60px;
+}
+
+.alternatives {
+  border-top: 1px solid #e5e7eb;
+  padding: 24px;
+  background: #fafafa;
+}
+
+.alternatives h2 {
+  font-size: 18px;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.alternative-card {
+  display: grid;
+  grid-template-columns:
+    1.2fr
+    1fr
+    1.2fr
+    1fr
+    100px;
+
+  align-items: center;
+  gap: 20px;
+
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+
+  padding: 20px;
+  margin-bottom: 12px;
+}
+
+.alternative-card.recommended {
+  border: 2px solid #22c55e;
+}
+
+.flight-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.flight-info span {
+  color: #6b7280;
+}
+
+.flight-info small {
+  color: #15803d;
+}
+
+.alternative-card div:nth-child(3) {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.alternative-card div:nth-child(3) span {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.delay {
+  color: #b45309;
+}
+
+.select-button {
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+
+  background: #2563eb;
+  color: white;
+
+  cursor: pointer;
+}
+
+.select-button:hover {
+  background: #1d4ed8;
+}
+
+@media (max-width: 900px) {
+  .booking-header,
+  .alternative-card {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-header {
+    gap: 10px;
+  }
+
+  .alternative-card {
+    gap: 12px;
+  }
+
+  .select-button {
+    width: 100%;
+  }
+}

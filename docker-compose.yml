@@ -1,0 +1,12 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    image: eurowings-assignment:latest
+    container_name: eurowings-assignment
+    ports:
+      - "8080:8080"
+
+    restart: always

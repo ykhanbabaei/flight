@@ -1,0 +1,81 @@
+{
+  "source": "external_flights",
+  "generated_at": 1784637492,
+  "results": [
+    {
+      "offer_id": "EXT-1",
+      "airline_name": "Nimbus Airways",
+      "dep_airport": "BER",
+      "arr_airport": "IST",
+      "dep_time": "2026-07-21 05:50",
+      "arr_time": "2026-07-21 08:50",
+      "availability": 24,
+      "price_cents": 18900,
+      "currency": "EUR",
+      "legs": [
+        {
+          "flight_no": "NB88",
+          "from": "CGN",
+          "to": "BER"
+        }
+      ]
+    },
+    {
+      "offer_id": "EXT-1",
+      "airline_name": "Nimbus Airways",
+      "dep_airport": "IST",
+      "arr_airport": "TEH",
+      "dep_time": "2026-07-21 02:40",
+      "arr_time": "2026-07-21 03:50",
+      "availability": 24,
+      "price_cents": 18900,
+      "currency": "EUR",
+      "legs": [
+        {
+          "flight_no": "NB88",
+          "from": "CGN",
+          "to": "BER"
+        }
+      ]
+    },
+
+
+    {
+      "offer_id": "EXT-10",
+      "airline_name": "Nimbus Airways",
+      "dep_airport": "CGN",
+      "arr_airport": "AMS",
+      "dep_time": "2026-07-21 00:40",
+      "arr_time": "2026-07-21 01:50",
+      "availability": 24,
+      "price_cents": 13900,
+      "currency": "EUR",
+      "legs": [
+        {
+          "flight_no": "NB81",
+          "from": "CGN",
+          "to": "AMS"
+        }
+      ]
+    },
+    {
+      "offer_id": "EXT-11",
+      "airline_name": "Nimbus Airways",
+      "dep_airport": "AMS",
+      "arr_airport": "BER",
+      "dep_time": "2026-07-21 02:50",
+      "arr_time": "2026-07-21 03:50",
+      "availability": 24,
+      "price_cents": 18900,
+      "currency": "EUR",
+      "legs": [
+        {
+          "flight_no": "NB88",
+          "from": "AMS",
+          "to": "BER"
+        }
+      ]
+    }
+
+  ]
+}
