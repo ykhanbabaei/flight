@@ -1,7 +1,7 @@
 package eurowings.assignment.datasource;
 
 import eurowings.assignment.dto.train.TrainConnection;
-import eurowings.assignment.dto.train.TrainConnectionsDto;
+import eurowings.assignment.dto.train.TrainConnectionsResponse;
 import eurowings.assignment.model.Route;
 import eurowings.assignment.model.RouteType;
 import org.slf4j.Logger;
@@ -19,12 +19,12 @@ import java.util.concurrent.CompletableFuture;
 import static eurowings.assignment.utils.MockBusySimulator.simulateDelay;
 
 @Component
-public class TrainRoutes extends RoutesClient<TrainConnectionsDto> {
+public class TrainRoutes extends RoutesClient<TrainConnectionsResponse> {
 
     private static final Logger logger = LoggerFactory.getLogger(TrainRoutes.class);
 
     public TrainRoutes(ObjectMapper objectMapper) {
-        super(objectMapper, TrainConnectionsDto.class);
+        super(objectMapper, TrainConnectionsResponse.class);
     }
 
     @Override
@@ -43,12 +43,12 @@ public class TrainRoutes extends RoutesClient<TrainConnectionsDto> {
 
     }
 
-    private List<Route> parseAndMap(TrainConnectionsDto trainConnectionsDto) {
+    private List<Route> parseAndMap(TrainConnectionsResponse trainConnectionsResponse) {
         var routes = new ArrayList<Route>();
-        if (Objects.isNull(trainConnectionsDto)) {
+        if (Objects.isNull(trainConnectionsResponse)) {
             return routes;
         }
-        var queries = trainConnectionsDto.queries();
+        var queries = trainConnectionsResponse.queries();
         if (Objects.isNull(queries)) {
             return routes;
         }

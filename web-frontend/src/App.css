@@ -196,3 +196,62 @@ h1 {
     width: 100%;
   }
 }
+
+.flight-disruption-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: white;
+}
+
+.flight-disruption-card__header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.flight-disruption-card__route {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.flight-disruption-card__arrow {
+  font-size: 18px;
+}
+
+.flight-disruption-card__status {
+  margin-left: auto;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #eee;
+}
+
+.flight-disruption-card__status--cancelled {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.flight-disruption-card__status--delayed {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.flight-disruption-card__schedule,
+.flight-disruption-card__details {
+  display: flex;
+  gap: 24px;
+  font-size: 14px;
+  color: #666;
+}
+
+.flight-disruption-card__reason {
+  flex: 1;
+}

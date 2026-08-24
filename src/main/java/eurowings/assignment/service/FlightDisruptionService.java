@@ -2,8 +2,9 @@ package eurowings.assignment.service;
 
 import eurowings.assignment.dto.AlternativeFlightDto;
 import eurowings.assignment.dto.FlightBookingDto;
+import eurowings.assignment.dto.FlightDisruptionDto;
 import eurowings.assignment.dto.disruption.Booking;
-import eurowings.assignment.dto.disruption.FlightDisruptionDto;
+import eurowings.assignment.dto.disruption.FlightDisruptionResponse;
 import eurowings.assignment.dto.disruption.FlightSegment;
 import eurowings.assignment.dto.disruption.FlightStatus;
 import eurowings.assignment.model.*;
@@ -52,27 +53,27 @@ public class FlightDisruptionService {
         }
     }
 
-    public List<FlightBookingDto> findRecommendedRoutesForAllBookings(FlightDisruptionDto flightDisruptionDto, List<Route> routes) {
+    public FlightDisruptionDto findRecommendedRoutesForAllBookings(FlightDisruptionResponse flightDisruptionResponse, List<Route> routes) {
         try {
-            return FlightEntityMapper.toFlightBookingDtoList(flightDisruptionDto, findAndMapRecommendedRoutesForAllBookings(flightDisruptionDto, routes));
+            return FlightEntityMapper.toFlightBookingDtoList(flightDisruptionResponse, findAndMapRecommendedRoutesForAllBookings(flightDisruptionResponse, routes));
         } catch (Exception e) {
             throw new InternalException("Error in finding and mapping recommended routes", e);
         }
     }
 
-    public Optional<FlightDisruptionDto> findFlightDisruption(String flightNumber, OffsetDateTime scheduledDeparture) {
+    public Optional<FlightDisruptionResponse> findFlightDisruption(String flightNumber, OffsetDateTime scheduledDeparture) {
         logger.info("Finding flight disruption with flight number {} and scheduled departure at {} ", flightNumber, scheduledDeparture);
         return flightDataSource.fetchFlightDisruption(flightNumber, scheduledDeparture);
     }
 
 
-    private static Map<String, List<AlternativeFlightDto>> findAndMapRecommendedRoutesForAllBookings(FlightDisruptionDto flightDisruptionDto, List<Route> routes) {
+    private static Map<String, List<AlternativeFlightDto>> findAndMapRecommendedRoutesForAllBookings(FlightDisruptionResponse flightDisruptionResponse, List<Route> routes) {
         if(Objects.isNull(routes) || routes.isEmpty()) {
             return Collections.emptyMap();
         }
         Map<String, List<AlternativeFlightDto>> result = new LinkedHashMap<>();
         Map<String, Integer> remainingSeats = routes.stream().collect(Collectors.toMap(Route::id, Route::availableSeats));
-        List<Booking> orderedBookings = mostConstrainedFirst(flightDisruptionDto.bookings(), routes, remainingSeats);
+        List<Booking> orderedBookings = sortBookings(flightDisruptionResponse.bookings(), routes, remainingSeats);
         for(Booking booking : orderedBookings) {
             List<AlternativeFlightDto> alternativeFlights = findAndMapRecommendedRoutes(booking, routes, remainingSeats);
             alternativeFlights.forEach(flight-> remainingSeats.merge(flight.id(), -booking.passengers(), Integer::sum));
@@ -81,7 +82,7 @@ public class FlightDisruptionService {
         return result;
     }
 
-    private static List<Booking> mostConstrainedFirst(List<Booking> bookings, List<Route> routes, Map<String, Integer> remainingSeats) {
+    private static List<Booking> sortBookings(List<Booking> bookings, List<Route> routes, Map<String, Integer> remainingSeats) {
         //TODO: Define a prioritization strategy for disrupted bookings.
         // Depending on airline policies and business rules, some bookings may receive higher priority.
         // For example, priority could be given to premium customers, business-class passengers,
@@ -98,7 +99,7 @@ public class FlightDisruptionService {
      * First try to find an alternative for canceled flight.
      * If not found based on NOT_DEPARTED and WILL_BE_MISSED segments
      * try to search different possibilities. If there is WILL_BE_MISSED segment also deadline constraint must be considered.
-     * In general case we may have some NOT_DEPARTED segments then exactly one CANCELLED segment followed by zero or some WILL_BE_MISSED segments e.g.:
+     * In general case we may have some NOT_DEPARTED segments then exactly one CANCELLED segment followed by zero or more WILL_BE_MISSED segments e.g.:
      * "segments": [
      * {
      * ...
@@ -129,18 +130,18 @@ public class FlightDisruptionService {
      * ...
      * },
      * ]
-     * There are many possibilities to check and the priorities order depends on the policies. For example to keep the
+     * There are many possibilities to check and the priority order depends on the policies. For example to keep the
      * costs minimum or give the customer convenient alternative journey by minimizing the legs.
      *
      * @param booking
      * @param routes
-     * @param remainingSeats
+     * @param remainingSeats mutable map for keep tracking remained seats
      * @return
      */
     private static List<AlternativeFlightDto> findAndMapRecommendedRoutes(Booking booking, List<Route> routes, Map<String, Integer> remainingSeats) {
         Optional<FlightSegment> cancelledSegmentOpt = findCanceledSegment(booking);
         if(cancelledSegmentOpt.isEmpty()){
-            logger.warn("Unexpected booking. Disruption booking flight must have at least one cancelled segment. Booking id: '{}'", booking.bookingRef());
+            logger.warn("Unexpected booking. Disruption booking flight must have exactly one cancelled segment. Booking id: '{}'", booking.bookingRef());
             return Collections.emptyList();
         }
         // First try to find alternative for canceled flight
@@ -156,7 +157,7 @@ public class FlightDisruptionService {
             return FlightEntityMapper.toAlternativeFlightDtoList(journeyRoutes);
         }
 
-        // Then try to find the alternative by including will be missed segments
+        // Then try to find the alternative by including 'will be missed' segments
         for(int index = 0; index < missedSegmentList.size(); index++){
             FlightSegment missedSegment = missedSegmentList.get(index);
             deadline = OffsetDateTime.MAX;
@@ -170,7 +171,7 @@ public class FlightDisruptionService {
             }
         }
 
-        // Then try to find the alternative by including not departed segments
+        // Then try to find the alternative by including 'not departed' segments
         List<FlightSegment> noDepartedSegmentList = findAllSegmentsWithStatus(booking, FlightStatus.NOT_DEPARTED);
         deadline = OffsetDateTime.MAX;
         if(!missedSegmentList.isEmpty()){

@@ -1,6 +1,6 @@
 package eurowings.assignment.datasource;
 
-import eurowings.assignment.dto.externalflight.ExternalFlightsDto;
+import eurowings.assignment.dto.externalflight.ExternalFlightsResponse;
 import eurowings.assignment.dto.externalflight.FlightOffer;
 import eurowings.assignment.model.Route;
 import eurowings.assignment.model.RouteType;
@@ -21,13 +21,13 @@ import java.util.concurrent.CompletableFuture;
 import static eurowings.assignment.utils.MockBusySimulator.simulateDelay;
 
 @Component
-public class ExternalRoutes extends RoutesClient<ExternalFlightsDto> {
+public class ExternalRoutes extends RoutesClient<ExternalFlightsResponse> {
 
     private static final Logger logger = LoggerFactory.getLogger(ExternalRoutes.class);
 
 
     public ExternalRoutes(ObjectMapper objectMapper) {
-        super(objectMapper, ExternalFlightsDto.class);
+        super(objectMapper, ExternalFlightsResponse.class);
     }
 
     @Override
@@ -45,13 +45,13 @@ public class ExternalRoutes extends RoutesClient<ExternalFlightsDto> {
 
     }
 
-    private List<Route> parseAndMap(ExternalFlightsDto externalFlightsDto) {
+    private List<Route> parseAndMap(ExternalFlightsResponse externalFlightsResponse) {
         var routes = new ArrayList<Route>();
-        if (Objects.isNull(externalFlightsDto)) {
+        if (Objects.isNull(externalFlightsResponse)) {
             return routes;
         }
 
-        List<FlightOffer> results = externalFlightsDto.results();
+        List<FlightOffer> results = externalFlightsResponse.results();
         if (Objects.isNull(results)) {
             return routes;
         }

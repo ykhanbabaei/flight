@@ -2,7 +2,8 @@ package eurowings.assignment.utils;
 
 import eurowings.assignment.dto.AlternativeFlightDto;
 import eurowings.assignment.dto.FlightBookingDto;
-import eurowings.assignment.dto.disruption.FlightDisruptionDto;
+import eurowings.assignment.dto.FlightDisruptionDto;
+import eurowings.assignment.dto.disruption.FlightDisruptionResponse;
 import eurowings.assignment.dto.disruption.FlightSegment;
 import eurowings.assignment.dto.disruption.Journey;
 import eurowings.assignment.model.Route;
@@ -15,17 +16,29 @@ public class FlightEntityMapper {
 
     private FlightEntityMapper() {}
 
-    public static List<FlightBookingDto> toFlightBookingDtoList(FlightDisruptionDto flightDisruptionDto, Map<String, List<AlternativeFlightDto>> flightAlternatives) {
-        return flightDisruptionDto.bookings().stream().map(booking -> new FlightBookingDto(
-                        booking.bookingRef(),
-                        booking.passengers(),
-                        flightDisruptionDto.disruption().flight(),
-                        getRoute(booking.journey()),
-                        flightDisruptionDto.disruption().scheduledDeparture().toString(),
-                        flightDisruptionDto.disruption().status(),
-                        flightAlternatives.getOrDefault(booking.bookingRef(), Collections.emptyList())
-                )
-        ).toList();
+    public static FlightDisruptionDto toFlightBookingDtoList(FlightDisruptionResponse flightDisruption, Map<String, List<AlternativeFlightDto>> flightAlternatives) {
+        return new FlightDisruptionDto(
+            flightDisruption.disruption().flight(),
+            flightDisruption.disruption().origin(),
+            flightDisruption.disruption().destination(),
+            flightDisruption.disruption().scheduledDeparture(),
+            flightDisruption.disruption().scheduledArrival(),
+            flightDisruption.disruption().status(),
+            flightDisruption.disruption().reason(),
+            flightDisruption.disruption().cancelledAt(),
+            flightDisruption.disruption().affectedBookings(),
+            flightDisruption.disruption().affectedPassengers(),
+            flightDisruption.bookings().stream().map(booking -> new FlightBookingDto(
+                booking.bookingRef(),
+                booking.passengers(),
+                flightDisruption.disruption().flight(),
+                getRoute(booking.journey()),
+                flightDisruption.disruption().scheduledDeparture().toString(),
+                flightDisruption.disruption().status(),
+                flightAlternatives.getOrDefault(booking.bookingRef(), Collections.emptyList())
+            )
+        ).toList()
+        );
     }
 
     private static String getRoute(Journey journey) {

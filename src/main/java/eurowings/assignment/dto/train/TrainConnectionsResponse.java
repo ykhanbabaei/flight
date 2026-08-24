@@ -2,7 +2,7 @@ package eurowings.assignment.dto.train;
 
 import java.util.List;
 
-public record TrainConnectionsDto(
+public record TrainConnectionsResponse(
         String provider,
         List<RailQuery> queries
 ) {

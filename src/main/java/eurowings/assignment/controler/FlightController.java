@@ -1,6 +1,7 @@
 package eurowings.assignment.controler;
 
-import eurowings.assignment.dto.disruption.FlightDisruptionDto;
+import eurowings.assignment.dto.disruption.FlightDisruptionResponse;
+import eurowings.assignment.model.Route;
 import eurowings.assignment.service.FlightDisruptionService;
 import eurowings.assignment.service.ResourceNotFoundException;
 import jakarta.validation.constraints.NotBlank;
@@ -13,7 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 
 @RestController
@@ -32,12 +35,12 @@ public class FlightController {
 
     @GetMapping(path = "/flights/stream-alternatives/{flightNumber}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter findBookingFlightsWithAlternativesAsync(@PathVariable @NotBlank String flightNumber, @RequestParam OffsetDateTime scheduledDeparture){
-        Optional<FlightDisruptionDto> flightDisruptionOpt = flightDisruptionService.findFlightDisruption(flightNumber, scheduledDeparture);
+        Optional<FlightDisruptionResponse> flightDisruptionOpt = flightDisruptionService.findFlightDisruption(flightNumber, scheduledDeparture);
         if(flightDisruptionOpt.isEmpty()){
             throw new ResourceNotFoundException("Flight not found with flight number: " + flightNumber);
         }
         var emitter = new SseEmitter(SSE_EMITTER_TIMEOUT);
-        var done = flightDisruptionService.findAlternativesAsync(accumulatedRoutes -> {
+        CompletableFuture<List<Route>> done = flightDisruptionService.findAlternativesAsync(accumulatedRoutes -> {
             try {
                 var bookings = flightDisruptionService.findRecommendedRoutesForAllBookings(flightDisruptionOpt.get(), accumulatedRoutes);
                 logger.info("Emitting alternative booking chunk for flight number {} and scheduled departure at {} ", flightNumber, scheduledDeparture);

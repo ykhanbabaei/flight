@@ -2,7 +2,7 @@ package eurowings.assignment.datasource;
 
 import eurowings.assignment.dto.internalflight.FlightSearch;
 import eurowings.assignment.dto.internalflight.InternalFlightOffer;
-import eurowings.assignment.dto.internalflight.InternalFlightsDto;
+import eurowings.assignment.dto.internalflight.InternalFlightsResponse;
 import eurowings.assignment.model.Route;
 import eurowings.assignment.model.RouteType;
 import org.slf4j.Logger;
@@ -19,12 +19,12 @@ import java.util.concurrent.CompletableFuture;
 import static eurowings.assignment.utils.MockBusySimulator.simulateDelay;
 
 @Component
-public class InternalRoutes extends RoutesClient<InternalFlightsDto> {
+public class InternalRoutes extends RoutesClient<InternalFlightsResponse> {
 
     private static final Logger logger = LoggerFactory.getLogger(InternalRoutes.class);
 
     public InternalRoutes(ObjectMapper objectMapper) {
-        super(objectMapper, InternalFlightsDto.class);
+        super(objectMapper, InternalFlightsResponse.class);
     }
 
     @Override
@@ -42,13 +42,13 @@ public class InternalRoutes extends RoutesClient<InternalFlightsDto> {
 
     }
 
-    private List<Route> parseAndMap(InternalFlightsDto internalFlightsDto) {
+    private List<Route> parseAndMap(InternalFlightsResponse internalFlightsResponse) {
         var routes = new ArrayList<Route>();
-        if (Objects.isNull(internalFlightsDto)) {
+        if (Objects.isNull(internalFlightsResponse)) {
             return routes;
         }
 
-        List<FlightSearch> searches = internalFlightsDto.searches();
+        List<FlightSearch> searches = internalFlightsResponse.searches();
         if (Objects.isNull(searches)) {
             return routes;
         }

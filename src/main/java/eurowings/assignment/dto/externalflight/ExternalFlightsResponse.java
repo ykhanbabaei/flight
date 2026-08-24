@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-public record ExternalFlightsDto(
+public record ExternalFlightsResponse(
 
         String source,
 

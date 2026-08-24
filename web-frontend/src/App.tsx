@@ -23,9 +23,23 @@ type FlightBooking = {
   alternatives: AlternativeFlight[];
 };
 
+type FlightDisruption = {
+  flight: string;
+  origin: string;
+  destination: string;
+  scheduledDeparture: string; // ISO 8601 datetime string
+  scheduledArrival: string;   // ISO 8601 datetime string
+  status: string;
+  reason: string;
+  cancelledAt: string | null; // ISO 8601 datetime string or null
+  affectedBookings: number;
+  affectedPassengers: number;
+  flightBookings: FlightBooking[];
+};
+
 function App(): React.ReactElement {
   const [expandedBookingId, setExpandedBookingId] = useState<string | null>("ABC123");
-  const [bookings, setBookings] = useState<FlightBooking[]>([]);
+  const [flightDisruption, setFlightDisruption] = useState<FlightDisruption>();
   const [error, setError] = useState<string | null>(null);
   const [alternativeButtonLoading, setAlternativeButtonLoading] = useState(false);
 
@@ -47,8 +61,8 @@ function App(): React.ReactElement {
 
       const handleMessage = (event: MessageEvent<string>): void => {
           try {
-            const jsonData = JSON.parse(event.data) as FlightBooking[];
-            setBookings(jsonData);
+            const jsonData = JSON.parse(event.data) as FlightDisruption;
+            setFlightDisruption(jsonData);
           } catch (error) {
                   setError(
                     error instanceof Error
@@ -99,12 +113,17 @@ function App(): React.ReactElement {
 
   return (
     <main className="container">
-      <h1>Flight Bookings</h1>
     <button onClick={() => loadBookingsWithAlternatives()} disabled={alternativeButtonLoading}>
       {alternativeButtonLoading ? "Loading..." : "Find Alternative flights"}
     </button>
+    {flightDisruption && (
+        <FlightDisruptionCard
+            key={flightDisruption.flight}
+            disruption={flightDisruption}
+        />
+    )}
     <div className="booking-list">
-        {bookings.map((booking) => {
+        {flightDisruption?.flightBookings?.map((booking) => {
           const isExpanded =
             expandedBookingId === booking.id;
 
@@ -201,6 +220,65 @@ function AlternativeFlightCard({
       <span>{alternative.price}€</span>
 
     </div>
+  );
+}
+
+
+type FlightDisruptionCardProps = {
+  disruption: FlightDisruption;
+};
+
+export function FlightDisruptionCard({
+   disruption,
+ }: FlightDisruptionCardProps) {
+  const formatDateTime = (date: string) =>
+      new Intl.DateTimeFormat("en-DE", {
+        dateStyle: "medium",
+        timeStyle: "short",
+      }).format(new Date(date));
+
+  return (
+      <div className="flight-disruption-card">
+        {/* Line 1: Flight and route */}
+        <div className="flight-disruption-card__header">
+          <strong>{disruption.flight}</strong>
+
+          <span className="flight-disruption-card__route">
+          {disruption.origin}
+            <span className="flight-disruption-card__arrow">→</span>
+            {disruption.destination}
+        </span>
+
+          <span
+              className={`flight-disruption-card__status flight-disruption-card__status--${disruption.status.toLowerCase()}`}
+          >
+          {disruption.status}
+        </span>
+        </div>
+
+        {/* Line 2: Schedule */}
+        <div className="flight-disruption-card__schedule">
+        <span>
+          Departure: {formatDateTime(disruption.scheduledDeparture)}
+        </span>
+
+          <span>
+          Arrival: {formatDateTime(disruption.scheduledArrival)}
+        </span>
+        </div>
+
+        {/* Line 3: Disruption information */}
+        <div className="flight-disruption-card__details">
+        <span className="flight-disruption-card__reason">
+          {disruption.reason}
+        </span>
+
+          <span>
+          {disruption.affectedBookings} bookings ·{" "}
+            {disruption.affectedPassengers} passengers
+        </span>
+        </div>
+      </div>
   );
 }
 

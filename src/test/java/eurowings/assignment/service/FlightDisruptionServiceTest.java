@@ -3,6 +3,7 @@ package eurowings.assignment.service;
 import eurowings.assignment.datasource.FlightDataSource;
 import eurowings.assignment.datasource.RoutesClient;
 import eurowings.assignment.dto.FlightBookingDto;
+import eurowings.assignment.dto.FlightDisruptionDto;
 import eurowings.assignment.dto.disruption.*;
 import eurowings.assignment.model.Route;
 import eurowings.assignment.model.RouteType;
@@ -155,14 +156,14 @@ class FlightDisruptionServiceTest {
 
     @Test
     void shouldReturnOptionalFlightWhenDisruptionExists() {
-        FlightDisruptionDto expectedDisruption = createMockFlightDisruption();
+        FlightDisruptionResponse expectedDisruption = createMockFlightDisruption();
 
         FlightDataSource flightDataSource = mock(FlightDataSource.class);
         when(flightDataSource.fetchFlightDisruption(any(), any())).thenReturn(Optional.of(expectedDisruption));
 
         FlightDisruptionService service = new FlightDisruptionService(flightDataSource);
 
-        Optional<FlightDisruptionDto> result = service.findFlightDisruption("ab123", OffsetDateTime.now());
+        Optional<FlightDisruptionResponse> result = service.findFlightDisruption("ab123", OffsetDateTime.now());
 
         assertTrue(result.isPresent());
         assertEquals(expectedDisruption, result.get());
@@ -175,7 +176,7 @@ class FlightDisruptionServiceTest {
 
         FlightDisruptionService service = new FlightDisruptionService(flightDataSource);
 
-        Optional<FlightDisruptionDto> result = service.findFlightDisruption("ab123", OffsetDateTime.now());
+        Optional<FlightDisruptionResponse> result = service.findFlightDisruption("ab123", OffsetDateTime.now());
 
         assertTrue(result.isEmpty());
     }
@@ -228,24 +229,24 @@ class FlightDisruptionServiceTest {
                 null
         );
 
-        FlightDisruptionDto disruption =
+        FlightDisruptionResponse disruption =
                 disruptionWithBookings(
                         booking("BOOKING-1", 2),
                         booking("BOOKING-2", 2)
                 );
 
-        List<FlightBookingDto> result =
+        FlightDisruptionDto result =
                 service.findRecommendedRoutesForAllBookings(
                         disruption,
                         List.of(route)
                 );
 
-        FlightBookingDto firstBooking = result.stream()
+        FlightBookingDto firstBooking = result.flightBookings().stream()
                 .filter(b -> b.id().equals("BOOKING-1"))
                 .findFirst()
                 .orElseThrow();
 
-        FlightBookingDto secondBooking = result.stream()
+        FlightBookingDto secondBooking = result.flightBookings().stream()
                 .filter(b -> b.id().equals("BOOKING-2"))
                 .findFirst()
                 .orElseThrow();
@@ -259,7 +260,7 @@ class FlightDisruptionServiceTest {
         );
     }
 
-    private FlightDisruptionDto disruptionWithBookings(Booking... bookings) {
+    private FlightDisruptionResponse disruptionWithBookings(Booking... bookings) {
 
         OffsetDateTime departure = OffsetDateTime.parse("2026-08-25T10:00:00+02:00");
 
@@ -276,7 +277,7 @@ class FlightDisruptionServiceTest {
                 20
         );
 
-        return new FlightDisruptionDto(
+        return new FlightDisruptionResponse(
                 disruption,
                 List.of(bookings)
         );
@@ -334,17 +335,17 @@ class FlightDisruptionServiceTest {
                 null
         );
 
-        List<FlightBookingDto> result =
+        FlightDisruptionDto result =
                 service.findRecommendedRoutesForAllBookings(
                         disruptionWithBookings(booking),
                         List.of(directAlternative)
                 );
 
-        assertEquals(1, result.getFirst().alternatives().size());
+        assertEquals(1, result.flightBookings().getFirst().alternatives().size());
 
         assertEquals(
                 "IST",
-                result.getFirst()
+                result.flightBookings().getFirst()
                         .alternatives()
                         .getFirst()
                         .to()
@@ -359,7 +360,7 @@ class FlightDisruptionServiceTest {
         }
     }
 
-    private FlightDisruptionDto createMockFlightDisruption() {
+    private FlightDisruptionResponse createMockFlightDisruption() {
         try {
             return readFlightDisruption();
         } catch (IOException e) {
@@ -367,11 +368,11 @@ class FlightDisruptionServiceTest {
         }
     }
 
-    private FlightDisruptionDto readFlightDisruption() throws IOException {
+    private FlightDisruptionResponse readFlightDisruption() throws IOException {
         var resource = new ClassPathResource("disruption.json");
         ObjectMapper objectMapper = new ObjectMapper();
         try (var inputStream = resource.getInputStream()) {
-            return objectMapper.readValue(inputStream, FlightDisruptionDto.class);
+            return objectMapper.readValue(inputStream, FlightDisruptionResponse.class);
         }
     }
 

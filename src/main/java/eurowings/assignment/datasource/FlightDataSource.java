@@ -1,6 +1,6 @@
 package eurowings.assignment.datasource;
 
-import eurowings.assignment.dto.disruption.FlightDisruptionDto;
+import eurowings.assignment.dto.disruption.FlightDisruptionResponse;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.ObjectMapper;
@@ -25,7 +25,7 @@ public class FlightDataSource {
         this.objectMapper = objectMapper;
     }
 
-    public Optional<FlightDisruptionDto> fetchFlightDisruption(String flightNumber, OffsetDateTime scheduledDeparture) {
+    public Optional<FlightDisruptionResponse> fetchFlightDisruption(String flightNumber, OffsetDateTime scheduledDeparture) {
         try {
             var flightDisruption = readFlightDisruption();
             return Optional.of(flightDisruption);
@@ -36,15 +36,14 @@ public class FlightDataSource {
             //    return Optional.empty();
             //}
         } catch (IOException e) {
-            //TODO: instead of runtimeException, throw a custom exception and handle it in the controller to return a proper error response
             throw new DataSourceException("Error in fetching flight disruption data", e);
         }
     }
 
-    public FlightDisruptionDto readFlightDisruption() throws IOException {
+    public FlightDisruptionResponse readFlightDisruption() throws IOException {
         var resource = new ClassPathResource("data/disruption.json");
         try (var inputStream = resource.getInputStream()) {
-            return objectMapper.readValue(inputStream, FlightDisruptionDto.class);
+            return objectMapper.readValue(inputStream, FlightDisruptionResponse.class);
         }
     }
 
