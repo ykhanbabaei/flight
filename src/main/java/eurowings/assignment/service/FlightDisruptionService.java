@@ -153,7 +153,7 @@ public class FlightDisruptionService {
         FlightSegment cancelledSegment = cancelledSegmentOpt.get();
         List<Route> journeyRoutes = RouteFinder.findBestRoutesForJourney(cancelledSegment.from(), cancelledSegment.to(), deadline, booking.passengers(), routes, remainingSeats);
         if(!journeyRoutes.isEmpty()){
-            logger.info("For Cancelled flight, Alternative journey found. Legs: '{}', Booking id: '{}', From: '{}',  Departure:  '{}'", journeyRoutes.size(), booking.bookingRef(), cancelledSegment.from(), cancelledSegment.departure());
+            logger.debug("For Cancelled flight, Alternative journey found. Legs: '{}', Booking id: '{}', From: '{}',  Departure:  '{}'", journeyRoutes.size(), booking.bookingRef(), cancelledSegment.from(), cancelledSegment.departure());
             return FlightEntityMapper.toAlternativeFlightDtoList(journeyRoutes);
         }
 
@@ -166,7 +166,7 @@ public class FlightDisruptionService {
             }
             journeyRoutes = RouteFinder.findBestRoutesForJourney(cancelledSegment.from(), missedSegment.to(), deadline, booking.passengers(), routes, remainingSeats);
             if(!journeyRoutes.isEmpty()){
-                logger.info("Alternative journey including will be missed segments found. Legs: '{}', Booking id: '{}', From: '{}',  To:  '{}'", journeyRoutes.size(), booking.bookingRef(), cancelledSegment.from(), missedSegment.to());
+                logger.debug("Alternative journey including will be missed segments found. Legs: '{}', Booking id: '{}', From: '{}',  To:  '{}'", journeyRoutes.size(), booking.bookingRef(), cancelledSegment.from(), missedSegment.to());
                 return FlightEntityMapper.toAlternativeFlightDtoList(journeyRoutes);
             }
         }
@@ -181,7 +181,7 @@ public class FlightDisruptionService {
             FlightSegment notDepartedSegment = noDepartedSegmentList.get(index);
             journeyRoutes = RouteFinder.findBestRoutesForJourney(notDepartedSegment.from(), cancelledSegment.to(), deadline, booking.passengers(), routes, remainingSeats);
             if(!journeyRoutes.isEmpty()){
-                logger.info("Alternative journey including not departed legs found. Legs: '{}', Booking id: '{}', From: '{}',  To:  '{}'", journeyRoutes.size(), booking.bookingRef(), notDepartedSegment.from(), cancelledSegment.to());
+                logger.debug("Alternative journey including not departed legs found. Legs: '{}', Booking id: '{}', From: '{}',  To:  '{}'", journeyRoutes.size(), booking.bookingRef(), notDepartedSegment.from(), cancelledSegment.to());
                 return FlightEntityMapper.toAlternativeFlightDtoList(journeyRoutes);
             }
         }
@@ -189,7 +189,7 @@ public class FlightDisruptionService {
         // Then try to find the alternative for the whole journey
         journeyRoutes = RouteFinder.findBestRoutesForJourney(booking.journey().origin(), booking.journey().destination(), OffsetDateTime.MAX, booking.passengers(), routes, remainingSeats);
         if(!journeyRoutes.isEmpty()){
-            logger.info("Alternative journey found. Legs: '{}', Booking id: '{}', From: '{}',  To:  '{}'", journeyRoutes.size(), booking.bookingRef(), booking.journey().origin(), booking.journey().destination());
+            logger.debug("Alternative journey found. Legs: '{}', Booking id: '{}', From: '{}',  To:  '{}'", journeyRoutes.size(), booking.bookingRef(), booking.journey().origin(), booking.journey().destination());
             return FlightEntityMapper.toAlternativeFlightDtoList(journeyRoutes);
         }
 

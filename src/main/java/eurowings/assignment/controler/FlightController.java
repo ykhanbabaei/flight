@@ -55,12 +55,13 @@ public class FlightController {
         done.whenComplete((result, ex) -> {
             try {
                 if (ex != null) {
-                    emitter.completeWithError(ex);
+                    emitter.send(SseEmitter.event().name("error").data(ex.getMessage()));
                 } else {
                     emitter.send(SseEmitter.event().name("complete").data("done"));
-                    emitter.complete();
                 }
+                emitter.complete();
             } catch (Exception e) {
+                logger.error("Error in emitting data", e);
                 emitter.completeWithError(e);
             }
         });

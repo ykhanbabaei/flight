@@ -78,6 +78,12 @@ function App(): React.ReactElement {
           eventSource.close();
       });
 
+      eventSource.addEventListener('error', () => {
+          eventSource.close();
+          setAlternativeButtonLoading(false);
+      });
+
+
       eventSource.onerror = () => {
           eventSource.close();
           setAlternativeButtonLoading(false);

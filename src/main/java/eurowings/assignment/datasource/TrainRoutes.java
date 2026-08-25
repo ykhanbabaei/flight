@@ -39,7 +39,7 @@ public class TrainRoutes extends RoutesClient<TrainConnectionsResponse> {
             } catch (Exception e) {
                 throw new DataSourceException("Error in fetching and mapping train routes", e);
             }
-        });
+        }).exceptionally(this::handleException);
 
     }
 

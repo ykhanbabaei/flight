@@ -41,7 +41,7 @@ public class ExternalRoutes extends RoutesClient<ExternalFlightsResponse> {
             } catch (IOException e) {
                 throw new DataSourceException("Error in fetching and mapping external routes", e);
             }
-        });
+        }).exceptionally(this::handleException);
 
     }
 

@@ -38,7 +38,7 @@ public class InternalRoutes extends RoutesClient<InternalFlightsResponse> {
             } catch (Exception e) {
                 throw new DataSourceException("Error in fetching and mapping internal routes", e);
             }
-        });
+        }).exceptionally(this::handleException);
 
     }
 
