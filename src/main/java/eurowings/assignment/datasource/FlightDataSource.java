@@ -16,11 +16,12 @@ public class FlightDataSource {
 
     final ObjectMapper objectMapper;
 
-    public FlightDataSource(InternalRoutes internalRoutes, ExternalRoutes externalRoutes, TrainRoutes trainRoutes, ObjectMapper objectMapper) {
+    public FlightDataSource(InternalRoutes internalRoutes, ExternalRoutes externalRoutes, TrainRoutes trainRoutes, BusRoutes busRoutes, ObjectMapper objectMapper) {
         this.routesClients = Arrays.asList(
                 internalRoutes,
                 externalRoutes,
-                trainRoutes
+                trainRoutes,
+                busRoutes
         );
         this.objectMapper = objectMapper;
     }
