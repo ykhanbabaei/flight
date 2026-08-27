@@ -37,7 +37,7 @@ public class FlightDisruptionService {
             var accumulatedRoutes = new ArrayList<Route>();
             var lock = new ReentrantLock();
             AtomicReference<Timer> timerRef = new AtomicReference<>();
-            AtomicReference<CompletableFuture<String>> timerFuture = new AtomicReference<>(new CompletableFuture<>());
+            AtomicReference<CompletableFuture<String>> timerFuture = new AtomicReference<>();
             List<CompletableFuture<Void>> allData = flightDataSource.getRoutesProviders().stream()
                     .map(dataSource -> dataSource.fetchRoutes().thenAcceptAsync(newRoutes -> {
                         try {
@@ -65,11 +65,12 @@ public class FlightDisruptionService {
         }
         Timer timer = new Timer();
         timerRef.set(timer);
+        timerFuture.set(new CompletableFuture<>());
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 onNextAccumulatedRoutesData.accept(accumulatedRoutes);
-                timerFuture.getAndSet(new CompletableFuture<>()).complete("");
+                timerFuture.get().complete("");
             }
         }, 2000);
 
