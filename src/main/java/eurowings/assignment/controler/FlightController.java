@@ -40,7 +40,7 @@ public class FlightController {
             throw new ResourceNotFoundException("Flight not found with flight number: " + flightNumber);
         }
         var emitter = new SseEmitter(SSE_EMITTER_TIMEOUT);
-        CompletableFuture<List<Route>> done = flightDisruptionService.findAlternativesAsync(accumulatedRoutes -> {
+        CompletableFuture<CompletableFuture<String>> done = flightDisruptionService.findAlternativesAsync(accumulatedRoutes -> {
             try {
                 var bookings = flightDisruptionService.findRecommendedRoutesForAllBookings(flightDisruptionOpt.get(), accumulatedRoutes);
                 logger.info("Emitting alternative booking chunk for flight number {} and scheduled departure at {} ", flightNumber, scheduledDeparture);
@@ -56,10 +56,19 @@ public class FlightController {
             try {
                 if (ex != null) {
                     emitter.send(SseEmitter.event().name("error").data(ex.getMessage()));
+                    emitter.complete();
                 } else {
-                    emitter.send(SseEmitter.event().name("complete").data("done"));
+                    result.whenComplete((s, throwable) -> {
+                        try {
+                            emitter.send(SseEmitter.event().name("complete").data("done"));
+                            emitter.complete();
+                        } catch (Exception e) {
+                            logger.error("Error in emitting data", e);
+                            emitter.completeWithError(e);
+                        }
+                    });
+
                 }
-                emitter.complete();
             } catch (Exception e) {
                 logger.error("Error in emitting data", e);
                 emitter.completeWithError(e);

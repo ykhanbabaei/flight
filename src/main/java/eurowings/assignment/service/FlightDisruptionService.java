@@ -32,7 +32,7 @@ public class FlightDisruptionService {
         this.flightDataSource = flightDataSource;
     }
 
-    public CompletableFuture<List<Route>> findAlternativesAsync(Consumer<List<Route>> onNextAccumulatedRoutesData) {
+    public CompletableFuture<CompletableFuture<String>> findAlternativesAsync(Consumer<List<Route>> onNextAccumulatedRoutesData) {
         try {
             var accumulatedRoutes = new ArrayList<Route>();
             var lock = new ReentrantLock();
@@ -49,11 +49,7 @@ public class FlightDisruptionService {
                         }
 
                     })).toList();
-            CompletableFuture<List<Route>> all = CompletableFuture.allOf(allData.toArray(new CompletableFuture[0])).thenApply(v -> accumulatedRoutes);
-            if(timerFuture.get() != null ){
-                timerFuture.get().join();
-            }
-            return all;
+            return CompletableFuture.allOf(allData.toArray(new CompletableFuture[0])).thenApply(v -> timerFuture.get());
         } catch (Exception e) {
             throw new InternalException("Error in fetching alternative flights", e);
         }
