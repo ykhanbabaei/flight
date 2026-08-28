@@ -1,7 +1,6 @@
 package eurowings.assignment.service;
 
 import eurowings.assignment.dto.AlternativeFlightDto;
-import eurowings.assignment.dto.FlightBookingDto;
 import eurowings.assignment.dto.FlightDisruptionDto;
 import eurowings.assignment.dto.disruption.Booking;
 import eurowings.assignment.dto.disruption.FlightDisruptionResponse;
@@ -17,8 +16,10 @@ import eurowings.assignment.utils.FlightEntityMapper;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,26 +33,51 @@ public class FlightDisruptionService {
         this.flightDataSource = flightDataSource;
     }
 
-    public CompletableFuture<List<Route>> findAlternativesAsync(Consumer<List<Route>> onNextAccumulatedRoutesData) {
+    public CompletableFuture<CompletableFuture<String>> findAlternativesAsync(Consumer<List<Route>> onNextAccumulatedRoutesData) {
         try {
             var accumulatedRoutes = new ArrayList<Route>();
             var lock = new ReentrantLock();
+            AtomicReference<Timer> timerRef = new AtomicReference<>();
+            AtomicReference<CompletableFuture<String>> timerFuture = new AtomicReference<>();
             List<CompletableFuture<Void>> allData = flightDataSource.getRoutesProviders().stream()
                     .map(dataSource -> dataSource.fetchRoutes().thenAcceptAsync(newRoutes -> {
                         try {
                             lock.lock();
                             accumulatedRoutes.addAll(newRoutes);
-                            onNextAccumulatedRoutesData.accept(accumulatedRoutes);
+                            scheduledConsumerRunner(timerRef, timerFuture, onNextAccumulatedRoutesData, ()->accumulatedRoutes);
                         } finally {
                             lock.unlock();
                         }
 
                     })).toList();
-            return CompletableFuture.allOf(allData.toArray(new CompletableFuture[0])).thenApply(v -> accumulatedRoutes);
+            return CompletableFuture.allOf(allData.toArray(new CompletableFuture[0])).thenApply(v -> timerFuture.get());
         } catch (Exception e) {
             throw new InternalException("Error in fetching alternative flights", e);
         }
     }
+
+    private void scheduledConsumerRunner(AtomicReference<Timer> timerRef,
+                                         AtomicReference<CompletableFuture<String>> timerFuture,
+                                         Consumer<List<Route>> onNextAccumulatedRoutesData,
+                                         Supplier<List<Route>> onTimerTimeout){
+        if(Objects.nonNull(timerRef.get())){
+            return;
+        }
+        Timer timer = new Timer();
+        timerRef.set(timer);
+        timerFuture.set(new CompletableFuture<>());
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                onNextAccumulatedRoutesData.accept(onTimerTimeout.get());
+                timerFuture.getAndSet(null).complete("");
+                timerRef.set(null);
+            }
+        }, 2000);
+
+    }
+
+
 
     public FlightDisruptionDto findRecommendedRoutesForAllBookings(FlightDisruptionResponse flightDisruptionResponse, List<Route> routes) {
         try {
