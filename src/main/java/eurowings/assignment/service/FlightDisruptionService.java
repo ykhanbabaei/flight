@@ -19,6 +19,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,7 +44,7 @@ public class FlightDisruptionService {
                         try {
                             lock.lock();
                             accumulatedRoutes.addAll(newRoutes);
-                            scheduledConsumerRunner(timerRef, timerFuture, accumulatedRoutes, onNextAccumulatedRoutesData);
+                            scheduledConsumerRunner(timerRef, timerFuture, onNextAccumulatedRoutesData, ()->accumulatedRoutes);
                         } finally {
                             lock.unlock();
                         }
@@ -55,9 +56,12 @@ public class FlightDisruptionService {
         }
     }
 
-    private void scheduledConsumerRunner(AtomicReference<Timer> timerRef, AtomicReference<CompletableFuture<String>> timerFuture, List<Route> accumulatedRoutes, Consumer<List<Route>> onNextAccumulatedRoutesData){
+    private void scheduledConsumerRunner(AtomicReference<Timer> timerRef,
+                                         AtomicReference<CompletableFuture<String>> timerFuture,
+                                         Consumer<List<Route>> onNextAccumulatedRoutesData,
+                                         Supplier<List<Route>> onTimerTimeout){
         if(Objects.nonNull(timerRef.get())){
-            timerRef.get().cancel();
+            return;
         }
         Timer timer = new Timer();
         timerRef.set(timer);
@@ -65,8 +69,9 @@ public class FlightDisruptionService {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                onNextAccumulatedRoutesData.accept(accumulatedRoutes);
-                timerFuture.get().complete("");
+                onNextAccumulatedRoutesData.accept(onTimerTimeout.get());
+                timerFuture.getAndSet(null).complete("");
+                timerRef.set(null);
             }
         }, 2000);
 
