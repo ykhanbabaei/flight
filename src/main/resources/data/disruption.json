@@ -13,6 +13,48 @@
   },
   "bookings": [
     {
+      "bookingRef": "XXXXXX",
+      "passengers": 4,
+      "journey": {
+        "origin": "IST",
+        "destination": "DXB",
+        "segments": [
+          {
+            "flight": "EW 2590",
+            "from": "IST",
+            "to": "CGN",
+            "departure": "2026-07-21T11:40:00+02:00",
+            "arrival": "2026-07-21T17:15:00+02:00",
+            "status": "NOT_DEPARTED"
+          },
+          {
+            "flight": "EW 4711",
+            "from": "CGN",
+            "to": "BER",
+            "departure": "2026-07-21T18:35:00+02:00",
+            "arrival": "2026-07-21T19:45:00+02:00",
+            "status": "CANCELLED"
+          },
+          {
+            "flight": "EW 2590",
+            "from": "BER",
+            "to": "DXB",
+            "departure": "2026-07-21T19:45:00+02:00",
+            "arrival": "2026-07-22T02:20:00+04:00",
+            "status": "WILL_BE_MISSED"
+          },
+          {
+            "flight": "EW 2591",
+            "from": "DXB",
+            "to": "TEH",
+            "departure": "2026-07-22T03:20:00+04:00",
+            "arrival": "2026-07-22T05:20:00+04:00",
+            "status": "WILL_BE_MISSED"
+          }
+        ]
+      }
+    },
+    {
       "bookingRef": "D3HRVC",
       "passengers": 2,
       "journey": {

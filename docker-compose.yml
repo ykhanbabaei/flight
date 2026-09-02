@@ -4,8 +4,8 @@ services:
       context: .
       dockerfile: Dockerfile
 
-    image: eurowings-assignment:latest
-    container_name: eurowings-assignment
+    image: flight-disruption-recovery:latest
+    container_name: flight-disruption-recovery
     ports:
       - "8080:8080"
 

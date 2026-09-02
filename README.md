@@ -1,4 +1,4 @@
-# Eurowings Disruption — Alternative Options Finder
+# Flight Disruption — Alternative Options Finder
 
 A prototype that takes a cancelled flight, searches three alternative-transport sources
 (Lufthansa Group flights, other airlines, and trains) **in parallel**, ranks the options, and
